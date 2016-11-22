@@ -127,11 +127,11 @@
 			
 			$config .= $serverStatusConfig;
 			
-		if(!file_exists('./config.php')){
+		
 			$file = fopen('./config.php', 'w');
 			fwrite($file, $config);
 			fclose($file);
-		}
+		
 	
 	function getTrueFalse($value) {
 		switch($value) {
