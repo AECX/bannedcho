@@ -1,3 +1,0 @@
- * Running on http://0.0.0.0:4999/ (Press CTRL+C to quit)
- * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
-WARNING:tornado.access:404 GET /favicon.ico (127.0.0.1) 38.28ms
