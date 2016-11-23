@@ -1430,7 +1430,9 @@ class P {
 			echo '<div id="rank"><font size=5><b> '.$rankSymbol.$rank.'</b></font></div>';
 			echo $friendButton;
 			echo '</div>';
-			echo '<div id="userpage-content">
+			echo '<div id="userpage-content">':
+		if(isset($badgeID[0])) {
+			echo '
 			<div class="col-md-3">';
 			// Badges Left colum
 			if ($badgeID[0] > 0) {
@@ -1454,6 +1456,7 @@ class P {
 			if ($badgeID[5] > 0) {
 				echo '<i class="fa '.$badgeIcon[5].' fa-2x"></i><br><b>'.$badgeName[5].'</b><br><br>';
 			}
+		}
 			// Calculate required score for our level
 			$reqScore = getRequiredScoreForLevel($level);
 			$reqScoreNext = getRequiredScoreForLevel($level + 1);
