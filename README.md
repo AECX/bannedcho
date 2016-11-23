@@ -28,7 +28,7 @@ This Code is based on the <a href="https://github.com/osuripple/ripple/tree/mast
   Go to "/etc/apache2/sites-available"
   Then create a file called "osu.ppy.sh*.conf*".
   Here is a sample for osu.ppy.sh.conf
-    > <VirtualHost *:80>
-    >   ServerName osu.ppy.sh
-    >   ServerAlias osu.bannedcho.ml
-    > </virtualServer>
+> <VirtualHost *:80>
+>   ServerName osu.ppy.sh
+>   ServerAlias osu.bannedcho.ml
+> </virtualServer>
