@@ -1468,8 +1468,10 @@ class P {
 			echo '</div><div class="col-md-6">
 			<!-- Stats -->
 			<b>Level '.$level.'</b>
-			<div class="progress">
-			<div class="progress-bar" role="progressbar" aria-valuenow="'.$percBar.'" aria-valuemin="10" aria-valuemax="100" style="width:'.$percBar.'%">'.$percText.'%</div>
+			<div class="progress progress-striped active">
+			<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="'.$percBar.'" aria-valuemin="10" aria-valuemax="100" style="width:'.$percBar.'%">'.$percText.'%
+			</div>
+			</div>
 			</div>
 			<table>
 			<tr>
