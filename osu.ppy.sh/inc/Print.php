@@ -1254,7 +1254,7 @@ class P {
 		if (!empty($_GET['e']) && isset($error[$_GET['e']])) {
 			self::ExceptionMessage($error[$_GET['e']]);
 		}
-		echo '<p align="center"><br><image class="animated bounce" src="'.(mt_rand(0, 100) == 1 ? '//i.imgur.com/CBKmTji.jpg' : './images/logo-256.png').'"></image><br></p><h1 class="animated bounceIn">The community of peppy\'s Victims</h1>';
+		echo '<p align="center"><br><image class="animated bounce" src="./images/logo-256.png"></image><br></p><h1 class="animated bounceIn">The community of peppy\'s Victims</h1>';
 		// Home alert
 		self::HomeAlert();
 	}
