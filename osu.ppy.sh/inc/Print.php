@@ -1472,7 +1472,6 @@ class P {
 			<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="'.$percBar.'" aria-valuemin="10" aria-valuemax="100" style="width:'.$percBar.'%">'.$percText.'%
 			</div>
 			</div>
-			</div>
 			<table>
 			<tr>
 			<td id="stats-name"><font size="3"><b>Performance</td></b><font>
