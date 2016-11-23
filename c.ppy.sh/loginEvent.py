@@ -16,16 +16,13 @@ def handle(flaskRequest):
 	responseData = bytes()
 	# The IP for your private network, to get the right location you should use your
 	# public IP (e.g http://ping.eu)
-	localIP = "172.20.7.107"
+	localIP = "172.20.7.107" # The ip you log in with
+	publicIP = "8.8.8.8" # google lul
 
 	# Get IP from flask request
 	requestIP = flaskRequest.headers.get("X-Forwarded-For")
 	if requestIP == localIP:
-		requestIP = "37.24.145.226"
-	if requestIP == "127.0.0.1":
-		requestIP = "37.24.145.226"
-	if requestIP == "172.20.7.115":
-		requestIP = "37.24.245.226"
+		requestIP = publicIP
 
 	# Console output
 	print("> Accepting connection from {}...".format(requestIP))
