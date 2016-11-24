@@ -163,6 +163,10 @@ class P {
 					$rankText = 'Admin';
 				break;
 			}
+			if($user['rank'] > 4) {
+					$rankColor = 'danger';
+					$rankText = 'Operator';
+			}
 			// Print row
 			echo '<tr>';
 			echo '<td class="success"><p class="text-center">'.$user['id'].'</p></td>';
