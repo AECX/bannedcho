@@ -3,10 +3,10 @@
 class Login {
 	const PageID = 2;
 	const URL = 'login';
-	const Title = 'Ripple - Login';
+	const Title = 'Bannedcho - Login';
 	const LoggedIn = false;
 	public $mh_POST = ['u', 'p'];
-	public $error_messages = ['Nice troll.', 'Wrong username or password.', 'You are banned.', 'You are not logged in.', 'Session expired. Please login again.', 'Invalid auto-login cookie.', 'You are already logged in.', 'Please log in from client! To Activate your Account!'];
+	public $error_messages = ['Nice troll.', 'Wrong username or password.', 'You are banned.', 'You are not logged in.', 'Session expired. Please login again.', 'Invalid auto-login cookie.', 'You are already logged in.', 'Please log in from client to Activate your Account!'];
 	public $success_messages = ["All right, sunshine! Your password is now changed. Why don't you login with your shiny new password, now?"];
 
 	public function P() {
