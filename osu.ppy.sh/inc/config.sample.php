@@ -20,8 +20,8 @@ define('DATABASE_WHAT', 'host');
 /*
  * server urls, no slash
 */
-$URL['avatar'] = 'http://osu.bannedcho.ml';
-$URL['server'] = 'http://a.bannedcho.ml';
+$URL['server'] = 'http://osu.bannedcho.ml';
+$URL['avatar'] = 'http://a.bannedcho.ml';
 $URL['name'] = 'Bannedcho'; // Name to display on website(s)
 /*
  * osu-submit-modular.php configuration
