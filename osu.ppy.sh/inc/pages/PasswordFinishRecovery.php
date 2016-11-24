@@ -3,7 +3,7 @@
 class PasswordFinishRecovery {
 	const PageID = 19;
 	const URL = 'recovery/finish';
-	const Title = 'Ripple - Password recovery';
+	const Title = 'Bannedcho - Password recovery';
 	const LoggedIn = false;
 	public $error_messages = ['Nice troll.', 'Please get your shit together and make a better password.', "barney is a dinosaur your password doesn't maaatch!", "D'ya know? your password is dumb. it's also one of the most used around the entire internet. yup.", "Don't even try."];
 	public $mh_GET = ['k', 'user'];
