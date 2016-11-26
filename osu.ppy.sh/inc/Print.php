@@ -2,6 +2,68 @@
 
 class P {
 	/*
+	 * RankedPage
+	 * Prints the ranked information of a user
+	*/
+	public static function rankedPage() {
+		redirect('/?u=88');
+	}
+	/* 
+	 * SupporterInfoPage
+	 * Prints the supporter-tag info-page
+	*/
+	public static function SupporterInfoPage() {
+		echo '
+			<div class="wrapper">
+				<div class="content-wrapper"
+					<div class="content">
+						
+						<h1>Supporter Tag</h1>
+						
+							We don\'t want to abuse the possibility of getting advantages by paying money! (like ppy for example)
+							But we also can\'t run the server for free. So just a tiny amount of money would help us to keep the server running
+							<br>
+							and offer you the best service we can offer!
+							<br>
+							Anyway there must be something like an advantage for you in order to convince you of buying a Supporter Tag.
+							<br><br>
+							So here\'s the deal:<br>
+							
+								<table class="table table-50-center table-striped table-hover">
+									<thead>
+										<th> </th><th>Non-supporter</th><th>Supporter</th>
+											</thead>
+											<tr><td>Download-speed</td><td>~40(kb/s)</td><td>>3000(kb/s)</td>	</tr>
+											<tr><td>Userpage-Background</td><td><img src="https://puu.sh/ssSUx.png" width="30" height="30"></img></td><td><img src="https://puu.sh/ssSZD.png" width="30" height="30"></img></td>	</tr>
+											<tr><td>Social-Media-Tags</td><td><img src="https://puu.sh/ssSUx.png" width="30" height="30"></img></td><td><img src="https://puu.sh/ssSZD.png" width="30" height="30"></img></td>		</tr>
+											<tr><td>Co-determination</td><td>No</td><td>Partially</td>	</tr>
+										</table>
+								<table class="table table-100-center table-hover">
+								<tr>
+							<td><b>Download speed osu!Direct:</b></td>
+							<td>Usually you will connect to bloodcat else it will be Howl\'s european server. If you are fine with bloodcats DL speed, you\'re lucky.</td>
+								</tr>
+								<tr>
+							<td><b>Userpage-Background:</b></td>
+							<td>You can set an individual background to your profile-page, remember a background may be an animated gif!</td>
+								</tr>
+							<td><b>Social-Media-Tags:</b></td>
+							<td>This is basically twitch and youtube, you can add links to your profile page. Supporters can also use \'!stream\' in osu!chat to enqueue a global notification like \'[user] started to <a href="http://twitch.tv/[user]">stream</a>\'!</td>
+								<tr>
+							<td><b>Co-determination:</b></td>
+							<td>Supporters may help operators and admins to decide <b>if they are asked.</b> Supporters will be informed about updates pre release and may respond with their thoughts to help making Bannedcho better!
+								</tr>
+								</table>
+					<h1>DONATE BUTTON HERE</h1>
+					</div>
+				</div>
+			</div>
+								
+				
+				
+		';
+	}
+	/*
 	 * AdminDashboard
 	 * Prints the admin panel dashborad page
 	*/
@@ -137,7 +199,7 @@ class P {
 				break;
 				case 1:
 					$allowedColor = 'success';
-					$allowedText = 'Ok';
+					$allowedText = 'Yes';
 				break;
 				case 2:
 					$allowedColor = 'warning';
@@ -368,8 +430,8 @@ class P {
 			<select name="r" class="selectpicker" data-width="100%" '.$selectDisabled.'>
 			<option value="1" '.$selected[0][1].'>User</option>
 			<option value="2" '.$selected[0][2].'>Supporter</option>
-			<option value="3" '.$selected[0][3].'>Mod (not working yet)</option>
-			<option value="4" '.$selected[0][4].'>Admin</option>
+			<option value="4" '.$selected[0][3].'>Admin</option>
+			<option value="5" '.$selected[0][4].'>Operator</option>
 			</select>
 			</td>
 			<!-- <td><p class="text-center"><input type="number" name="r" class="form-control" value="'.$userData['rank'].'" '.$readonly[0].'></td> -->
@@ -1258,7 +1320,27 @@ class P {
 		if (!empty($_GET['e']) && isset($error[$_GET['e']])) {
 			self::ExceptionMessage($error[$_GET['e']]);
 		}
-		echo '<p align="center"><br><image class="animated bounce" src="./images/logo-256.png"></image><br></p><h1 class="animated bounceIn">The community of peppy\'s Victims</h1>';
+		echo '
+		<div class="col-lg-12 text-center">
+		<br>
+		<img style="position: fixed; left: 36%;" width="550px" src="./images/animated/background.gif"></img>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<image class="animated bounce" style="position fixed; bottom: 50%; left: 30%;" src="./images/animated/Bannedcho-text-260x42.png"></image><br><h1 class="animated bounceIn">
+		<br>
+		<br>
+		<br>
+		<font style="color: white;">
+		>    The community of peppy\'s Victims    <</h1>
+		</font></div>
+		';
 		// Home alert
 		self::HomeAlert();
 	}
@@ -1276,10 +1358,15 @@ class P {
 		// Global alert
 		self::GlobalAlert();
 		try {
+			if($u == -1) {
+				$u = getUserID($_SESSION['username']);
+			}
+			
 			// Check if the user is in db
 			if (!$GLOBALS['db']->fetch('SELECT id FROM users WHERE id = ?', $u)) {
 				throw new Exception('User not found');
 			}
+			
 			// globals
 			global $PlayStyleEnum;
 			// Check banned status
@@ -1319,6 +1406,7 @@ class P {
 			$silenceEndTime = current($GLOBALS['db']->fetch('SELECT silence_end FROM users WHERE username = ?', $username));
 			$silenceReason = current($GLOBALS['db']->fetch('SELECT silence_reason FROM users WHERE username = ?', $username));
 			$maximumCombo = $GLOBALS['db']->fetch('SELECT max_combo FROM scores WHERE username = ? AND play_mode = ? ORDER BY max_combo DESC LIMIT 1', [$username, $m]);
+			$leaguerank = '<img src="http://sk2.op.gg/images/medals/'.getLeague($u).'.png" width="150"></img>';
 			if ($maximumCombo) {
 				$maximumCombo = current($maximumCombo);
 			} else {
@@ -1382,32 +1470,41 @@ class P {
 				}
 			}
 			// Userpage custom stuff
-			if (strlen($userpageContent) > 0) {
-				// BB Code parser
-				require_once 'bbcode.php';
-				// Collapse type (if < 350 chars, userpage will be shown)
-				if (strlen($userpageContent) <= 350) {
-					$ct = 'in';
-				} else {
-					$ct = 'out';
-				}
-				// Print userpage content
-				//echo('<div class="panel panel-default"><div class="panel-body">'.$bbcode->toHTML($userpageContent, true).'</div></div>');
-				echo '<div class="spoiler">
+			echo '
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="spoiler">
 						<div class="panel panel-default">
-							<div class="panel-heading">
-								<button type="button" class="btn btn-default btn-xs spoiler-trigger" data-toggle="collapse">Expand userpage</button>';
-				if ($username == $_SESSION['username']) {
-					echo '	<a href="index.php?p=8" type="button" class="btn btn-default btn-xs"><i>Edit</i></a>';
-				}
-				// Honor Here :)
-				echo '</div>
-							<div class="panel-collapse collapse '.$ct.'">
-								<div class="panel-body">'.bbcode::toHtml($userpageContent, true).'</div>
-							</div>
-						</div>
-					</div>';
-			}
+							';
+							$socialmedia = explode(',', $userData['social_media']);
+											
+						if(getUserRank(getUserUsername($_GET['u'])) >= 2) {
+						// Get links
+						$names = explode(',', $userData['social_media_name']);
+						$medialink[0] = 'http://twitch.tv/'.$names[0];
+						$medialink[1] = 'http://youtube.com/user/'.$names[1];
+						// Get names + icons
+						$socialmedia[0] = '<a href="'.$medialink[0].'"><img src="'.current($GLOBALS['db']->fetch('SELECT icon FROM social_media WHERE id = ?', $socialmedia[0])).'" width="30" height="30"></a>';
+						$socialmedia[1] = '<a href="'.$medialink[1].'"><img src="'.current($GLOBALS['db']->fetch('SELECT icon FROM social_media WHERE id = ?', $socialmedia[1])).'" width="30" height="30"></a>';
+						echo '<div class="panel-heading">';							
+							if($names[0] != '' && $names[0] != '-UNSET-' && isset($names[0])) {
+								echo $socialmedia[0];								
+							}
+							if($names[0] != '' && $names[0] != '-UNSET-' && isset($names[0]) && $names[1] != '-UNSET-' && isset($names[1])) {
+								echo ' | ';
+							}
+							if($names[1] != '-UNSET-' && isset($names[1])) {
+								echo $socialmedia[1];
+							}
+						echo '</div>';
+						}
+					echo '</div><div id="userpage-content"><b>'.strtoUpper(str_replace('_', ' ', getLeague($u))).'</b><br>'.$leaguerank.'<br>'.bbcode::tohtml($userpageContent).'</div>
+				
+			
+				</div>
+			</div>
+			</div>
+			';
 			// Userpage Background
 			$link = current($GLOBALS['db']->fetch('SELECT backgroundlink FROM users_stats WHERE id = ?', $_GET['u']));
 			echo '
@@ -1472,11 +1569,24 @@ echo '
 			} else {
 				$percBar = $percText;
 			} // Progressbar percentage, minimum 10 or it's glitched
+				if($percBar <= 25) {
+					$progressbarmode = 'success';
+				}
+				if($percBar > 25 && $percBar < 50) {
+					$progressbarmode = 'info';
+				}
+				if($percBar >= 50 && $percBar < 75) {
+					$progressbarmode = 'warning';
+				}
+				if($percBar >=75) {
+					$progressbarmode = 'danger';
+				}
+				
 			echo '</div><div class="col-md-6">
 			<!-- Stats -->
 			<b>Level '.$level.'</b>
 			<div class="progress progress-striped active">
-			<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="'.$percBar.'" aria-valuemin="10" aria-valuemax="100" style="width:'.$percBar.'%">'.$percText.'%
+			<div class="progress-bar progress-bar-'.$progressbarmode.'" role="progressbar" aria-valuenow="'.$percBar.'" aria-valuemin="10" aria-valuemax="100" style="width:'.$percBar.'%">'.$percText.'%
 			</div>
 			</div>
 			<table>
@@ -1533,14 +1643,18 @@ echo '
 			// Print top plays table (only if we have them)
 			if ($topPlays) {
 				echo '<table class="table">
-				<tr><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">Performance</th></tr>';
+				<tr><th class="text-left">Rank</th><th class="text-left"><i class="fa fa-trophy"></i>	Top plays</th><th class="text-right">Accuracy</th><th class="text-right">Performance</th></tr>';
 				for ($i = 0; $i < count($topPlays); $i++) {
+					$playrank = strtolower(getPlayRank($topPlays[$i]['id']));
+					$ranksymbol = '<img src="/images/ranks/ranking-'.$playrank.'-small.png"></img>';
+					
 					// Get beatmap name from md5 (beatmaps_names) for this play
 					$bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $topPlays[$i]['beatmap_md5']);
 					if ($bn) {
 						// Beatmap name found, print beatmap name and score
 						echo '<tr>';
-						echo '<td class="warning"><p class="text-left">'.current($bn).' <b>'.getScoreMods($topPlays[$i]['mods']).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($topPlays[$i]['time'])).'</small>'.'</b></p></td>';
+						echo '<td class="warning">'.$ranksymbol.'</td>';
+						echo '<td class="warning"><p class="text-left">'.current($bn).' <b>'.getScoreMods($topPlays[$i]['mods']).'</b><small>×'.$topPlays[$i]['max_combo'].'</small><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($topPlays[$i]['time'])).'</small>'.'</b></p></td>';
 						echo '<td class="warning"><p class="text-right">'.accuracy($topPlays[$i]['accuracy']).'%</p></td>';
 						echo '<td class="warning"><p class="text-right"><b>'.number_format($topPlays[$i]['pp']).' pp</b>	<a href="/web/osu-getreplay-full.php?c='.$topPlays[$i]['id'].'"><i class="fa fa-star"></i></a></p></td>';
 						echo '</tr>';
@@ -1553,14 +1667,17 @@ echo '
 			// Print recent plays table (only if we have them)
 			if ($recentPlays) {
 				echo '<table class="table">
-				<tr><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays</th><th class="text-right">Accuracy</th><th class="text-right">Performance</th></tr>';
+				<tr><th class="text-left">Rank</th><th class="text-left"><i class="fa fa-clock-o"></i>	Recent plays</th><th class="text-right">Accuracy</th><th class="text-right">Performance</th></tr>';
 				for ($i = 0; $i < count($recentPlays); $i++) {
+					$playrank = strtolower(getPlayRank($recentPlays[$i]['id']));
+					$ranksymbol = '<img src="/images/ranks/ranking-'.$playrank.'-small.png"></img>';
 					// Get beatmap name from md5 (beatmaps_names) for this play
 					$bn = $GLOBALS['db']->fetch('SELECT beatmap_name FROM beatmaps_names WHERE beatmap_md5 = ?', $recentPlays[$i]['beatmap_md5']);
 					if ($bn) {
 						// Beatmap name found, print beatmap name and score
 						echo '<tr>';
-						echo '<td class="success"><p class="text-left">'.current($bn).' <b>'.getScoreMods($recentPlays[$i]['mods']).'</b><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($recentPlays[$i]['time'])).'</small>'.'</p></td>';
+						echo '<td class="success">'.$ranksymbol.'</td>';
+						echo '<td class="success"><p class="text-left">'.current($bn).' <b>'.getScoreMods($recentPlays[$i]['mods']).'</b><small>×'.$recentPlays[$i]['max_combo'].'</small><br><small>'.timeDifference(time(), osuDateToUNIXTimestamp($recentPlays[$i]['time'])).'</small>'.'</p></td>';
 						echo '<td class="success"><p class="text-right">'.accuracy($recentPlays[$i]['accuracy']).'%</p></td>';
 						echo '<td class="success"><p class="text-right"><b>'.number_format($recentPlays[$i]['pp']).' pp</b></p></td>';
 						echo '</tr>';
@@ -1610,12 +1727,7 @@ echo '
 	 * Prints the Changelog page.
 	*/
 	public static function Changelogpage() {
-		// Maintenance check
-		self::MaintenanceStuff();
-		// Global alert
-		self::GlobalAlert();
-		// Changelog
-		getChangelog();
+		redirect('/index.php');
 	}
 
 	/*
@@ -1916,9 +2028,18 @@ echo '
 		if (isset($_GET['s']) && $_GET['s'] == 'ok') {
 			self::SuccessMessage('Avatar changed!');
 		}
+		if (isset($_GET['s']) && $_GET['s'] == 'okm') {
+			self::SuccessMessage('Social media updated!');
+		}
 		// Print default message if we have no exception/success
 		if (!isset($_GET['e']) && !isset($_GET['s'])) {
 			echo '<p>Give a nice touch to your profile with a custom avatar!<br></p>';
+		}
+		$disabled = '';
+		$readonly = '';
+		if(getUserRank($_SESSION['username']) < 2) {
+			$disabled = 'disabled';
+			$readonly = 'readonly';
 		}
 		// Print form
 		echo '
@@ -1932,20 +2053,40 @@ echo '
 		Recommended size: 100x100</i>
 		<p style="line-height: 15px"></p>
 		<button type="submit" class="btn btn-primary">Change avatar</button>
-		</form>
-		</div>';
+		</form>';
 		// Print 2. form
 		$link = current($GLOBALS['db']->fetch('SELECT backgroundlink FROM users_stats WHERE id = ?', getUserID($_SESSION['username'])));
+		if(!$link || empty($link) || !isset($link)) {
+			$link = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1000px-No_image_available.svg.png';
+		}
 		echo '
-		<div>
 		<b>Current Background</b><br><img src="'.$link.'" height="144"/>
 		<form action="submit.php" method="POST">
 		<input name="action" value="changeBackground" hidden>
 		<input name="name" value="'.$_SESSION['username'].'" hidden>
-		<p align="center"><input type="text" placeholder="Background Link" name="link"></p>
+		<p align="center"><input class="form-control" type="text" placeholder="Background Link" name="link" '.$readonly.'></p>
 		<i>Don\'t forget! Backgrounds may be <strong>gif</strong>!</i><br>
-		<button type="submit" class="btn btn-primary">Change background</button>
+		<i>If background doesn\'t load<br>right click -> copy adress -> ctrl + t -> ctrl + v -> Enter. Then refresh</i><br>
+		<button type="submit" class="btn btn-primary '.$disabled.'">Change background</button>
+		</form>
 		</div>
+		<br>
+		<div>
+		<b>Social Media</b><br>
+		<form action="submit.php" method="POST">
+		<input name="action" value="socialMedia" hidden>
+		<input name="id" value="'.getUserID($_SESSION['username']).'" hidden>
+		
+		<table class="table-50-center">
+		<tr>
+		<td>http://twitch.tv/</td><td><input class="form-control" type="text" name="twitch" placeholder="xder_" '.$readonly.'></input></td>
+		</tr>
+		<tr>
+		<td>http://youtube.com/user/</td><td><input class="form-control" type="text" name="youtube" placeholder="superthegmaster" '.$readonly.'></input></td>
+		</tr>
+		</table>
+		<button type="submit" class="btn btn-primary '.$disabled.'">Update social media</button>
+		</form>
 		';
 	}
 
