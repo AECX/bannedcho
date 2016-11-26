@@ -6,8 +6,9 @@ class P {
 	 * Prints the ranked information of a user
 	*/
 	public static function test() {
-		
+		if(updatePP() == TRUE) {
 		echo 'TESTPAGE';
+		}
 	}
 	/* 
 	 * SupporterInfoPage
@@ -1410,12 +1411,13 @@ class P {
 			$users = $GLOBALS['db']->fetchAll('SELECT id FROM users');
 			$league = getLeague($u);
 			$i = 0;
-			$val = 1;
+			$val = 0;
 			foreach($users as $user) {
+				$user = current($user);
 				$i++;
 				if(getLeague($user) == $league) {
 					$val += 1;
-				}				
+				}
 			}
 			$leagueperc = ($val/$i)*100;
 			$league = strtoUpper(str_replace('_', ' ', $league));
@@ -1494,6 +1496,28 @@ class P {
 					<div class="spoiler">
 						<div class="panel panel-default">
 							';
+							$socialmedia = explode(',', $userData['social_media']);
+											
+						if(getUserRank(getUserUsername($_GET['u'])) >= 2) {
+						// Get links
+						$names = explode(',', $userData['social_media_name']);
+						$medialink[0] = 'http://twitch.tv/'.$names[0];
+						$medialink[1] = 'http://youtube.com/user/'.$names[1];
+						// Get names + icons
+						$socialmedia[0] = '<a href="'.$medialink[0].'"><img src="'.current($GLOBALS['db']->fetch('SELECT icon FROM social_media WHERE id = ?', $socialmedia[0])).'" width="30" height="30"></a>';
+						$socialmedia[1] = '<a href="'.$medialink[1].'"><img src="'.current($GLOBALS['db']->fetch('SELECT icon FROM social_media WHERE id = ?', $socialmedia[1])).'" width="30" height="30"></a>';
+						echo '<div class="panel-heading">';							
+							if($names[0] != '' && $names[0] != '-UNSET-' && isset($names[0])) {
+								echo $socialmedia[0];								
+							}
+							if($names[0] != '' && $names[0] != '-UNSET-' && isset($names[0]) && $names[1] != '-UNSET-' && isset($names[1])) {
+								echo ' | ';
+							}
+							if($names[1] != '-UNSET-' && isset($names[1])) {
+								echo $socialmedia[1];
+							}
+						echo '</div>';
+						}
 					echo '</div><div id="userpage-content"><b>'.$league.'</font></b><br>'.$leaguerank.'<br><font size="1"><i>Like '.$leagueperc.'% of the community</i></font><br>'.bbcode::tohtml($userpageContent, true).'</div>
 				
 			
@@ -1503,9 +1527,12 @@ class P {
 			';
 			// Userpage Background
 			$link = current($GLOBALS['db']->fetch('SELECT backgroundlink FROM users_stats WHERE id = ?', $_GET['u']));
+			if(!$link || !isset($link) || empty($link)) {
+				$link = 'https://puu.sh/suQql.png';
+			}
 			echo '
 			<body style="background-image:url('.$link.'); background-attachment:fixed; background-repeat: no-repeat; background-position: 50% 50%; background-size: 100% auto;">
-			<div id="layer" style="background-image:url(https://puu.sh/reXxo.png);">
+			<div id="layer" class="layer" style="background-image:url(https://puu.sh/reXxo.png);">
 			';
 			// Userpage header
 			// 1.5 -- Add quick admin commands
@@ -1588,7 +1615,7 @@ echo '
 			<table>
 			<tr>
 			<td id="stats-name"><font size="3"><b>Performance</td></b><font>
-			<td id="stats-value"><font size="3"><b>'.$userData['pp_'.$modeForDB].'</font></td></b>
+			<td id="stats-value"><font size="3"><b>'.$userData['pp_'.$modeForDB].' pp</font></td></b>
 			</tr>
 			<tr>
 			<td id="stats-name">Ranked Score</td>
@@ -2066,6 +2093,23 @@ echo '
 		<button type="submit" class="btn btn-primary '.$disabled.'">Change background</button>
 		</form>
 		</div>
+		<br>
+		<div>
+		<b>Social Media</b><br>
+		<form action="submit.php" method="POST">
+		<input name="action" value="socialMedia" hidden>
+		<input name="id" value="'.getUserID($_SESSION['username']).'" hidden>
+		
+		<table class="table-50-center">
+		<tr>
+		<td>http://twitch.tv/</td><td><input class="form-control" type="text" name="twitch" placeholder="xder_" '.$readonly.'></input></td>
+		</tr>
+		<tr>
+		<td>http://youtube.com/user/</td><td><input class="form-control" type="text" name="youtube" placeholder="superthegmaster" '.$readonly.'></input></td>
+		</tr>
+		</table>
+		<button type="submit" class="btn btn-primary '.$disabled.'">Update social media</button>
+		</form>
 		';
 	}
 
