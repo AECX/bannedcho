@@ -5,8 +5,9 @@ class P {
 	 * RankedPage
 	 * Prints the ranked information of a user
 	*/
-	public static function rankedPage() {
-		redirect('/?u=88');
+	public static function test() {
+		
+		echo 'TESTPAGE';
 	}
 	/* 
 	 * SupporterInfoPage
@@ -1406,7 +1407,24 @@ class P {
 			$silenceEndTime = current($GLOBALS['db']->fetch('SELECT silence_end FROM users WHERE username = ?', $username));
 			$silenceReason = current($GLOBALS['db']->fetch('SELECT silence_reason FROM users WHERE username = ?', $username));
 			$maximumCombo = $GLOBALS['db']->fetch('SELECT max_combo FROM scores WHERE username = ? AND play_mode = ? ORDER BY max_combo DESC LIMIT 1', [$username, $m]);
-			$leaguerank = '<img src="http://sk2.op.gg/images/medals/'.getLeague($u).'.png" width="150"></img>';
+			$users = $GLOBALS['db']->fetchAll('SELECT id FROM users');
+			$league = getLeague($u);
+			$i = 0;
+			$val = 1;
+			foreach($users as $user) {
+				$i++;
+				if(getLeague($user) == $league) {
+					$val += 1;
+				}				
+			}
+			$leagueperc = ($val/$i)*100;
+			$league = strtoUpper(str_replace('_', ' ', $league));
+			$img = '<img';
+			if($league == 'CHALLENGER 1' || $league == 'MASTER 1') {						
+				$league = substr($league, 0, -2);
+			}
+			$league = '<font size="5">'.$league;
+			$leaguerank = '<img class="animated bounce" src="http://sk2.op.gg/images/medals/'.getLeague($u).'.png" width="150"></img>';
 			if ($maximumCombo) {
 				$maximumCombo = current($maximumCombo);
 			} else {
@@ -1498,7 +1516,7 @@ class P {
 							}
 						echo '</div>';
 						}
-					echo '</div><div id="userpage-content"><b>'.strtoUpper(str_replace('_', ' ', getLeague($u))).'</b><br>'.$leaguerank.'<br>'.bbcode::tohtml($userpageContent).'</div>
+					echo '</div><div id="userpage-content"><b>'.$league.'</font></b><br>'.$leaguerank.'<br><font size="1"><i>Like '.$leagueperc.'% of the community</i></font><br>'.bbcode::tohtml($userpageContent, true).'</div>
 				
 			
 				</div>
@@ -1755,7 +1773,7 @@ echo '
 			$selected[$_GET['type']] = 'selected';
 		}
 		// Changelog
-		echo '<div id="narrow-content"><h1><i class="fa fa-paper-plane"></i>	Send a report</h1>Here you can report bugs or request features. Please try to descbibe your bug/feature as detailed as possible.<br>The whole team speaks English and Italian. Don\'t be afraid to write in a maccaroni language!<br><br>';
+		echo '<div id="narrow-content"><h1><i class="fa fa-paper-plane"></i>	Send a report</h1>Here you can report bugs or request features. Please try to descbibe your bug/feature as detailed as possible.<br>The whole team speaks English. Don\'t be afraid to write in a maccaroni language!<br><br>';
 		echo '<form method="POST" action="submit.php" id="send-report-form">
 		<input name="action" value="sendReport" hidden>
 		<div class="input-group" style="width:100%">
