@@ -13,6 +13,8 @@ require_once $df.'/Print.php';
 require_once $df.'/RememberCookieHandler.php';
 require_once $df.'/PlayStyleEnum.php';
 require_once $df.'/resize.php';
+require_once $df.'/bbcode.php';
+require_once $df.'/ModsEnum.php';
 // Helpers
 require_once $df.'/helpers/PasswordHelper.php';
 require_once $df.'/helpers/UsernameHelper.php';
@@ -30,6 +32,43 @@ $GLOBALS['db'] = new DBPDO();
 /****************************************
  **			GENERAL FUNCTIONS 		   **
  ****************************************/
+/* 
+ * playrank
+ * gets playrank
+ * 
+*/
+function getPlayRank($id) {
+	$replayData = $GLOBALS['db']->fetch('SELECT * FROM scores WHERE id = ?', [$id]);
+	
+	// Calculate rank
+	$totalNotes = $replayData['300_count'] + $replayData['100_count'] + $replayData['50_count'] + $replayData['misses_count'];
+	$perc300 = number_format($replayData['300_count'], 2) / number_format($totalNotes, 2);
+	$perc50 = number_format($replayData['50_count'], 2) / number_format($totalNotes, 2);
+	$hidden = $replayData['mods'] & ModsEnum::Hidden || $replayData['mods'] & ModsEnum::Flashlight ? true : false;
+	$rank = 'N';
+	if ($perc300 == 1.0) {
+		if ($hidden) {
+			$rank = 'XH';
+		} else {
+			$rank = 'X';
+		}
+	} elseif ($perc300 > 0.9 && $perc40 <= 0.01 && $replayData['misses_count'] == 0) {
+		if ($hidden) {
+			$rank = 'SH';
+		} else {
+			$rank = 'S';
+		}
+	} elseif (($perc300 > 0.8 && $replayData['misses_count'] == 0) || ($perc300 > 0.9)) {
+		$rank = 'A';
+	} elseif (($perc300 > 0.7 && $replayData['misses_count'] == 0) || ($perc300 > 0.8)) {
+		$rank = 'B';
+	} elseif ($perc300 > 0.6) {
+		$rank = 'C';
+	} else {
+		$rank = 'D';
+	}
+	return $rank;
+}
 /*
  * redirect
  * Redirects to a URL.
@@ -133,9 +172,9 @@ function setTitle($p) {
 			case 16:
 				return '<title>'.$ServerName.' - Read documentation</title>';
 			break;
-			case 17:
-				return '<title>'.$ServerName.' - Changelog</title>';
-			break;
+	//		case 17:
+	//			return '<title>'.$ServerName.' - Changelog</title>';
+	//		break;
 			case 18:
 				return '<title>'.$ServerName.' - Recover your password</title>';
 			break;
@@ -156,6 +195,9 @@ function setTitle($p) {
 			break;
 			case 26:
 				return '<title>'.$ServerName.' - Friendlist</title>';
+			break;
+			case 28:
+				return '<title>'.$ServerName.' - Supporter</title>';
 			break;
 			case 100:
 				return '<title>RAP - Dashboard</title>';
@@ -201,6 +243,9 @@ function setTitle($p) {
 			break;
 			case 'u':
 				return '<title>'.getUserUsername($_GET['u']).'\'s Userpage</title>';
+			break;
+			case 'r':
+				return '<title>'.getUserUsername($_GET['r']).' Ranked stats</title>';
 			break;
 			default:
 				return '<title>'.$ServerName.' - 404</title>';
@@ -248,6 +293,9 @@ function printPage($p) {
 
 			case 1:
 				P::HomePage();
+			break;
+			case 'test':
+				P::Test();
 			break;
 				// Register page (guest)
 
@@ -316,9 +364,9 @@ function printPage($p) {
 			break;
 				// Show changelog
 
-			case 17:
-				P::ChangelogPage();
-			break;
+//			case 17:
+//				P::ChangelogPage();
+//			break;
 				// Password recovery
 
 			case 18:
@@ -359,7 +407,10 @@ function printPage($p) {
 				P::FriendlistPage();
 			break;
 				// Admin panel (> 100 pages are admin ones)
-
+			case 28:
+				sessionCheck();
+				P::SupporterInfoPage();
+			break;
 			case 100:
 				sessionCheckAdmin();
 				P::AdminDashboard();
@@ -443,6 +494,9 @@ function printPage($p) {
 				sessionCheckAdmin();
 				P::AdminViewReport();
 			break;
+			case 'r':
+				P::rankedPage();
+			break;
 				// 404 page
 
 			default:
@@ -515,7 +569,7 @@ function printNavbar() {
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i>	Help</a></li>
 						'.(file_exists(dirname(__FILE__).'/../blog/anchor/config/db.php') ? '<li class="dropdown-submenu"><a href="blog/"><i class="fa fa-anchor"></i>	Blog</a></li>' : '').'
 						<li class="divider"></li>
-						<li class="dropdown-submenu"><a href="https://github.com/osuripple/ripple"><i class="fa fa-github"></i>	Github</a></li>
+						<li class="dropdown-submenu"><a href="https://github.com/rlsen/bannedcho"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
 					</ul>
 				</li>';
@@ -531,9 +585,10 @@ function printNavbar() {
 					<ul class="dropdown-menu">
 						<li class="dropdown-submenu"><a href="index.php?p=23"><i class="fa fa-gavel"></i> Rules</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=14"><i class="fa fa-question-circle"></i> Help</a></li>
-						<li class="dropdown-submenu"><a href="index.php?p=17"><i class="fa fa-code"></i> Changelog</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=27"><i class="fa fa-cogs"></i>	Server status</a></li>
 						<li class="divider"></li>
+						<li class="dropdown-submenu"><a href="index.php?p=28"><i class="fa fa-eur"></i> Support us!</a></li>
+						<li class="dropdown-submenu"><a href="https://github.com/rlsen/bannedcho"><i class="fa fa-github"></i>	Github</a></li>
 						<li class="dropdown-submenu"><a href="index.php?p=21"><i class="fa fa-info-circle"></i>	About</a></li>
 					</ul>
 				</li>';
@@ -679,6 +734,58 @@ function startSessionIfNotStarted() {
 	if (session_status() == PHP_SESSION_NONE) {
 		session_start();
 	}
+}
+function getLeague($id) {
+	if($id == 999) {
+		return 'challenger_1';
+	}
+	$pplv = $GLOBALS['db']->fetch('SELECT pp_std, level_std FROM users_stats WHERE id = ?', $id);
+	// Calculate rank including level
+	$pp = $pplv['pp_std'];
+	$lv = $pplv['level_std'];
+	
+	if($pp >= ($lv*100)) {
+		return 'challenger_1';
+	}
+	if($pp >= ($lv*90)) {
+		return 'master_1';
+	}
+	// Division based ranks
+		// Diamond
+		if($pp >= ($lv*70)) {
+			return 'diamond_'.getDivision($pp, ($lv*90));
+		}
+		elseif($pp >= ($lv*45)) {
+			return 'platinum_'.getDivision($pp, ($lv*70));
+		}
+		elseif($pp >= ($lv*25)) {
+			return 'gold_'.getDivision($pp, ($lv*45));
+		}
+		elseif($pp >= ($lv*10)) {
+			return 'silver_'.getDivision($pp, ($lv*25));
+		}
+		else {
+			return 'bronze_'.getDivision($pp, ($lv*10));
+		}
+	
+}
+function getDivision($pp, $hpp) {
+	if($pp >= (0.8*$hpp)) {
+		$re = '1';
+	}
+	elseif($pp >= (0.6*$hpp)) {
+		$re = '2';
+	}
+	elseif($pp >= (0.4*$hpp)) {
+		$re = '3';
+	}
+	elseif($pp >= (0.2*$hpp)) {
+		$re = '4';
+	}
+	else {
+		$re = '5';
+	}
+	return $re;
 }
 /*
  * sessionCheck
