@@ -23,7 +23,7 @@ class Leaderboard {
 		// Bold the selected mode
 		$modesText[$m] = '<b>'.$modesText[$m].'</b>';
 		// Header stuff
-		echo '<blockquote><p><font size="4"><i>"Ouchi ouchi ouch.<br>Ouch again."</font></i></p><footer>Gideon Strohmeyer</footer></blockquote>';
+		echo '<blockquote><p><font size="4"><i>"banning is an okay thing to do these days"</font></i></p><footer>Dean (peppy) Herbert</footer></blockquote>';
 		echo '<a href="index.php?p=13&m=0">'.$modesText[0].'</a> | <a href="index.php?p=13&m=1">'.$modesText[1].'</a> | <a href="index.php?p=13&m=2">'.$modesText[2].'</a> | <a href="index.php?p=13&m=3">'.$modesText[3].'</a>';
 		// Leaderboard
 		echo '<table class="table table-striped table-hover">
