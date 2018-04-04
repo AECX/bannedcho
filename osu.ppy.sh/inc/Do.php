@@ -91,9 +91,7 @@ class D {
 			// Put some data into users_stats
 			$GLOBALS['db']->execute("INSERT INTO `users_stats`(id, username, user_color, user_style, ranked_score_std, playcount_std, total_score_std, ranked_score_taiko, playcount_taiko, total_score_taiko, ranked_score_ctb, playcount_ctb, total_score_ctb, ranked_score_mania, playcount_mania, total_score_mania, country) VALUES (?, ?, 'black', '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ?);", [$uid, $_POST['u'], getUserCountry()]);
 			// Update leaderboard (insert new user) for each mode.
-			foreach (['std', 'taiko', 'ctb', 'mania'] as $m) {
-				Leaderboard::Update($uid, 0, $m);
-			}
+			
 			// All fine, done
 			redirect('index.php?p=3&s=lmao');
 		}
